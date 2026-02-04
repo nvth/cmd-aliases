@@ -6,6 +6,7 @@ set "REG_FILE=%SCRIPT_DIR%autorun-hkcu.reg"
 
 set "ALIAS_DIR=C:\alias"
 set "CMD_FILE=%ALIAS_DIR%\cmd.cmd"
+set "SRC_CMD_FILE=%SCRIPT_DIR%cmd.cmd"
 
 if not exist "%ALIAS_DIR%" (
   mkdir "%ALIAS_DIR%"
@@ -15,9 +16,15 @@ if not exist "%ALIAS_DIR%" (
   )
 )
 
-> "%CMD_FILE%" (
-  echo @echo off
-  echo DOSKEY ls=dir /B $*
+if not exist "%SRC_CMD_FILE%" (
+  echo Missing source file: "%SRC_CMD_FILE%".
+  exit /b 1
+)
+
+copy /Y "%SRC_CMD_FILE%" "%CMD_FILE%" >nul
+if errorlevel 1 (
+  echo Failed to copy "%SRC_CMD_FILE%" to "%CMD_FILE%".
+  exit /b 1
 )
 
 > "%REG_FILE%" (
